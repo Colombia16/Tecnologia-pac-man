@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pac-Man Simples</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: black;
+            color: white;
+        }
+        canvas {
+            background-color: black;
+            display: block;
+            margin: 20px;
+            border: 2px solid white;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .controls button {
+            background-color: yellow;
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .controls button:active {
+            background-color: orange;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pac-Man Simples</h1>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <div class="controls">
+        <button id="upBtn">Cima</button>
+    </div>
+    <div class="controls">
+        <button id="leftBtn">Esquerda</button>
+        <button id="downBtn">Baixo</button>
+        <button id="rightBtn">Direita</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const pacman = {
+            x: 200,
+            y: 200,
+            size: 20,
+            speed: 20,
+            dx: 0,
+            dy: 0,
+            draw: function() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0.2 * Math.PI, 1.8 * Math.PI); // Boca de Pac-Man
+                ctx.lineTo(this.x, this.y); // Centro
+                ctx.fillStyle = 'yellow';
+                ctx.fill();
+                ctx.closePath();
+            },
+            update: function() {
+                this.x += this.dx;
+                this.y += this.dy;
+
+                // Limites da tela
+                if (this.x - this.size < 0) {
+                    this.x = this.size;
+                }
+                if (this.x + this.size > canvas.width) {
+                    this.x = canvas.width - this.size;
+                }
+                if (this.y - this.size < 0) {
+                    this.y = this.size;
+                }
+                if (this.y + this.size > canvas.height) {
+                    this.y = canvas.height - this.size;
+                }
+            }
+        };
+
+        function update() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            pacman.update();
+            pacman.draw();
+            requestAnimationFrame(update);
+        }
+
+        function moveUp() {
+            pacman.dy = -pacman.speed;
+            pacman.dx = 0;
+        }
+
+        function moveDown() {
+            pacman.dy = pacman.speed;
+            pacman.dx = 0;
+        }
+
+        function moveLeft() {
+            pacman.dx = -pacman.speed;
+            pacman.dy = 0;
+        }
+
+        function moveRight() {
+            pacman.dx = pacman.speed;
+            pacman.dy = 0;
+        }
+
+        document.getElementById('upBtn').addEventListener('click', moveUp);
+        document.getElementById('downBtn').addEventListener('click', moveDown);
+        document.getElementById('leftBtn').addEventListener('click', moveLeft);
+        document.getElementById('rightBtn').addEventListener('click', moveRight);
+
+        // Para teclas do teclado também funcionarem
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') moveUp();
+            if (e.key === 'ArrowDown') moveDown();
+            if (e.key === 'ArrowLeft') moveLeft();
+            if (e.key === 'ArrowRight') moveRight();
+        });
+
+        update();
+    </script>
+</body>
+</html>
